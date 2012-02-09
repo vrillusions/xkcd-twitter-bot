@@ -1,0 +1,12 @@
+# XKCD Twitter Bot
+
+This is the code that reads the rss feed from xkcd and posts to [@xkcd_bot](http://twitter.com/xkcd_bot).
+
+## Setup
+
+Since twitter only allows oauth--even for automated posting by yourself--I had to create an app at http://dev.twitter.com.  They let you generate oauth credentials for your user, which is what I did.
+
+## Requirements
+
+* tweepy - which is included in package
+* feedparser - not included so make sure it's installed
