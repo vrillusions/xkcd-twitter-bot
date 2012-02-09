@@ -2,6 +2,8 @@
 
 This is the code that reads the rss feed from xkcd and posts to [@xkcd_bot](http://twitter.com/xkcd_bot).
 
+I made this when I noticed [@xkcdbot](http://twitter.com/xkcdbot) hasn't updated in a while.  Afterwards I realized there's [@xkcdrss](http://twitter.com/xkcdrss).  Still leaving this around since I spent an entire, like, hour doing this and may be useful for people that want to do their own twitter bot of some sort.
+
 ## Setup
 
 Since twitter only allows oauth--even for automated posting by yourself--I had to create an app at http://dev.twitter.com.  They let you generate oauth credentials for your user, which is what I did.
