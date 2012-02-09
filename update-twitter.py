@@ -60,7 +60,7 @@ def main():
     # compare with cache
     if cache['id'] != rss['id']:
         #print 'new post'
-        post_update('#xkcd %s %s' % (rss['title'], rss['link']))
+        post_update('%s %s #xkcd' % (rss['title'], rss['link']))
         cPickle.dump(rss, open('cache.dat', 'wb'), -1)
 
 
