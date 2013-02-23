@@ -18,7 +18,7 @@ sys.path.append("./lib/tweepy")
 import tweepy
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 def post_update(status):
@@ -42,8 +42,8 @@ def post_update(status):
         return True
 
         
-def process_feed(rss, cache_file, suffix = '#xkcd'):
-    feed = feedparser.parse(rss)
+def process_feed(url, cache_file, suffix = '#xkcd'):
+    feed = feedparser.parse(url)
     # lots of scary warnings about possible security risk using this method
     # but for local use I'd rather do this than a try-catch with open()
     if not os.path.isfile(cache_file):
@@ -65,7 +65,8 @@ def process_feed(rss, cache_file, suffix = '#xkcd'):
 def main():
     """The main function."""
     process_feed('http://xkcd.com/rss.xml', 'cache-xkcd.dat', '#xkcd')
-    process_feed('http://what-if.xkcd.com/feed.atom', 'cache-whatif.dat', '#xkcd #whatif')
+    process_feed('http://what-if.xkcd.com/feed.atom', 'cache-whatif.dat',
+        '#xkcd #whatif')
 
 
 if __name__ == "__main__":
