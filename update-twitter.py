@@ -41,17 +41,15 @@ def post_update(status):
     else:
         return True
 
-
-def main():
-    """The main function."""
-    xkcd_rss = "http://xkcd.com/rss.xml"
-    feed = feedparser.parse(xkcd_rss)
+        
+def process_feed(rss, cache_file, suffix = '#xkcd'):
+    feed = feedparser.parse(rss)
     # lots of scary warnings about possible security risk using this method
     # but for local use I'd rather do this than a try-catch with open()
-    if not os.path.isfile('cache.dat'):
+    if not os.path.isfile(cache_file):
         # make a blank cache file
-        cPickle.dump({'id': None}, open('cache.dat', 'wb'), -1)
-    cache = cPickle.load(open('cache.dat'))
+        cPickle.dump({'id': None}, open(cache_file, 'wb'), -1)
+    cache = cPickle.load(open(cache_file))
     rss = {}
     rss['id'] = feed['entries'][0]['id']
     rss['link'] = feed['entries'][0]['link']
@@ -59,9 +57,15 @@ def main():
     rss['summary'] = feed['entries'][0]['summary']
     # compare with cache
     if cache['id'] != rss['id']:
-        #print 'new post'
-        post_update('%s %s #xkcd' % (rss['title'], rss['link']))
-        cPickle.dump(rss, open('cache.dat', 'wb'), -1)
+        #print 'new post %s %s' % (rss['title'], rss['link'])
+        post_update('%s %s %s' % (rss['title'], rss['link'], suffix))
+        cPickle.dump(rss, open(cache_file, 'wb'), -1)
+ 
+
+def main():
+    """The main function."""
+    process_feed('http://xkcd.com/rss.xml', 'cache-xkcd.dat', '#xkcd')
+    process_feed('http://what-if.xkcd.com/feed.atom', 'cache-whatif.dat', '#xkcd #whatif')
 
 
 if __name__ == "__main__":
