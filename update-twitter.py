@@ -18,7 +18,7 @@ sys.path.append("./lib/tweepy")
 import tweepy
 
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 
 
 def post_update(status):
