@@ -18,7 +18,6 @@ import cPickle
 from ConfigParser import SafeConfigParser
 
 import feedparser
-sys.path.append("./lib/tweepy")
 import tweepy
 
 

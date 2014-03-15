@@ -1,3 +1,0 @@
-[submodule "lib/tweepy"]
-	path = lib/tweepy
-	url = git://github.com/tweepy/tweepy.git

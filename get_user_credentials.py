@@ -13,7 +13,6 @@ import os
 from ConfigParser import SafeConfigParser
 import logging
 
-sys.path.append("./lib/tweepy")
 import tweepy
 
 
