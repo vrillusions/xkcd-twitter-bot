@@ -4,6 +4,8 @@
 
 Parse an rss feed for new entries and post them to twitter.
 
+TODO: no maintenance is done on cache so it can get large over time
+
 Environment Variables
     LOGLEVEL: overrides the level specified here. Default is warning
 
@@ -14,7 +16,8 @@ from __future__ import (division, absolute_import, print_function,
 import logging
 import os
 import sys
-import cPickle
+import cPickle as pickle
+from datetime import datetime
 from ConfigParser import SafeConfigParser
 from optparse import OptionParser
 
@@ -22,7 +25,7 @@ import feedparser
 import tweepy
 
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 
 
 # Logger config
@@ -70,6 +73,38 @@ class TwitterBot(object):
         self.consumer_secret = consumer_secret
         self.access_token = None
         self.access_token_secret = None
+        self.cache_file = 'cache.dat'
+        self._cache = self._load_cache()
+        self.log.debug('cache: {}'.format(self._cache))
+
+    def _load_cache(self):
+        """Loads cache file.
+
+        :return: either existing cache or blank dict if new
+
+        """
+        self.log.debug('enter _load_cache()')
+        try:
+            cache = pickle.load(open(self.cache_file, 'rb'))
+        except IOError as exc:
+            if exc.errno == 2:
+                # 2 is file not found continue on
+                self.log.warning('Cache file not found, creating new cache')
+                cache = {}
+            else:
+                raise
+        return cache
+
+    def _save_cache(self):
+        """Saves cache .
+
+        :return: True on success
+
+        """
+        self.log.debug('enter _save_cache()')
+        with open(self.cache_file, 'wb') as fh:
+            pickle.dump(self._cache, fh, -1)
+        return True
 
     def post_update(self, status):
         """Posts update to twitter.
@@ -91,41 +126,30 @@ class TwitterBot(object):
         else:
             return True
 
-    def process_feed(self, url, cache_file, suffix = '#xkcd'):
+    def process_feed(self, url, suffix = '#xkcd'):
         """Process the given feed for new items.
 
-        BUG: only posts the first item
-
         :param string url: URL to RSS feed
-        :param string cache_file: Name of cache file
         :param string suffix: Tags to append to status
 
         """
         self.log.debug('enter process_feed()')
         self.log.debug('url: {}'.format(url))
-        self.log.debug('cache_file: {}'.format(cache_file))
         self.log.debug('suffix: {}'.format(suffix))
         feed = feedparser.parse(url)
-        try:
-            cache = cPickle.load(open(cache_file, 'rb'))
-        except IOError as exc:
-            if exc.errno == 2:
-                # 2 is file not found continue on
-                self.log.debug('Cache file not found, continue without cache')
-                cache = None
+        for entry in feed.entries:
+            if entry['id'] not in self._cache:
+                self.log.debug('{} not cached, posting'.format(entry['id']))
+                post = ' '.join((entry['title'], entry['link'], suffix))
+                self.log.info('new post: {}'.format(post))
+                self.post_update(post)
+                self._cache[entry['id']] = datetime.utcnow().isoformat()
+                # Save cache after each successful post (may be a little
+                # excessive)
+                self._save_cache()
             else:
-                raise
-        rss = {}
-        rss['id'] = feed['entries'][0]['id']
-        rss['link'] = feed['entries'][0]['link']
-        rss['title'] = feed['entries'][0]['title']
-        rss['summary'] = feed['entries'][0]['summary']
-        # compare with cache, if it exists
-        if not cache or cache['id'] != rss['id']:
-            post = '{} {} {}'.format(rss['title'], rss['link'], suffix)
-            self.log.info('new post: {}'.format(post))
-            self.post_update(post)
-            cPickle.dump(rss, open(cache_file, 'wb'), -1)
+                self.log.debug('{} exists in cache, skipping'
+                        .format(entry['id']))
 
 
 def main(argv=None):
@@ -156,9 +180,8 @@ def main(argv=None):
     twitterbot = TwitterBot(consumer_key, consumer_secret)
     twitterbot.access_token = access_token
     twitterbot.access_token_secret = access_token_secret
-    twitterbot.process_feed('http://xkcd.com/rss.xml', 'cache-xkcd.dat', '#xkcd')
-    twitterbot.process_feed('http://what-if.xkcd.com/feed.atom',
-            'cache-whatif.dat', '#xkcd #whatif')
+    twitterbot.process_feed('http://xkcd.com/rss.xml', '#xkcd')
+    twitterbot.process_feed('http://what-if.xkcd.com/feed.atom', '#xkcd #whatif')
 
 
 if __name__ == "__main__":
