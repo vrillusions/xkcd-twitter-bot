@@ -6,9 +6,12 @@ I made this when I noticed [@xkcdbot](http://twitter.com/xkcdbot) hasn't updated
 
 ## Setup
 
-Since twitter only allows oauth--even for automated posting by yourself--I had to create an app at http://dev.twitter.com.  They let you generate oauth credentials for your user, which is what I did.
+- setup virtualenv if you haven't yet. I like [virtualenv-burrito](https://github.com/brainsik/virtualenv-burrito) to get up and going quick
+- run `mkvirtualenv -r requirements.txt xkcd-twitter-bot`
+- copy `config-sample.ini` to `config.ini`
+- go to http://dev.twitter.com and create an app for yourself. Make sure it has read/write access
+- put the app api keys (`consumer_key` and `consumer_secret`) in `config.ini`.
+- run `get_user_credentials.py` which will get you the user api keys (or you can generate on website if app is registered to same user that's posting)
+- put those values in `config.ini`
+- run `update_twitter.py -v` and it may actually work
 
-## Requirements
-
-* tweepy - which is included in package
-* feedparser - not included so make sure it's installed
