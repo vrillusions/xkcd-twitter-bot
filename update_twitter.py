@@ -8,6 +8,7 @@ TODO: no maintenance is done on cache so it can get large over time
 
 Environment Variables
     LOGLEVEL: overrides the level specified here. Default is warning
+        choices: DEBUG, INFO, WARNING, ERROR, or CRITICAL
 
 """
 
@@ -16,10 +17,13 @@ from __future__ import (division, absolute_import, print_function,
 import logging
 import os
 import sys
-import cPickle as pickle
 from datetime import datetime
 from ConfigParser import SafeConfigParser
 from optparse import OptionParser
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import feedparser
 import tweepy
@@ -27,14 +31,6 @@ import tweepy
 
 __version__ = '0.5.0-dev'
 
-
-# Logger config
-# DEBUG, INFO, WARNING, ERROR, or CRITICAL
-# This will set log level from the environment variable LOGLEVEL or default
-# to warning. You can also just hardcode the error if this is simple.
-_LOGLEVEL = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
-_LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(level=_LOGLEVEL, format=_LOGFORMAT)
 
 def _parse_opts(argv=None):
     """Parse the command line options.
@@ -163,6 +159,9 @@ def main(argv=None):
     :rtype: int
 
     """
+    loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
+    logformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    logging.basicConfig(level=loglevel, format=logformat)
     log = logging.getLogger('main')
     if argv is None:
         argv = sys.argv
