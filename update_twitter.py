@@ -46,9 +46,9 @@ def _parse_opts(argv=None):
     parser = OptionParser(version='%prog {}'.format(__version__))
     parser.set_defaults(verbose=False)
     parser.add_option('-c', '--config', dest='config', metavar='FILE',
-        help='use config FILE (default: %default)', default='config.ini')
+            help='use config FILE (default: %default)', default='config.ini')
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
-        help='be more verbose (default is no)')
+            help='be more verbose (default is no)')
     (options, args) = parser.parse_args(argv)
     return options, args
 
@@ -72,7 +72,7 @@ class TwitterBot(object):
         self.access_token_secret = None
         self.cache_file = 'cache.dat'
         self._cache = self._load_cache()
-        self.log.debug('cache: %s',self._cache)
+        self.log.debug('cache: %s', self._cache)
 
     def _load_cache(self):
         """Loads cache file.
@@ -123,7 +123,7 @@ class TwitterBot(object):
         else:
             return True
 
-    def process_feed(self, url, suffix = '#xkcd'):
+    def process_feed(self, url, suffix='#xkcd'):
         """Process the given feed for new items.
 
         :param string url: URL to RSS feed

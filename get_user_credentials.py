@@ -44,7 +44,7 @@ def main():
     except tweepy.TweepError:
         print('Error! Failed to get access token')
         return 1
-    print('Enter these values in config for access_token and access_token_secret')
+    print('Enter these values in for access_token and access_token_secret')
     print('access_token: {}'.format(auth.access_token.key))
     print('access_token_secret: {}'.format(auth.access_token.secret))
     return 0
@@ -52,5 +52,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
