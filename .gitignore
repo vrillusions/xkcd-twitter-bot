@@ -1,4 +1,4 @@
 *.py?
 config.ini
 cache*.dat
-*.log
+*.log*
