@@ -30,7 +30,7 @@ import feedparser
 import tweepy
 
 
-__version__ = '0.5.0'
+__version__ = '0.6.0-dev'
 
 
 def _parse_opts(argv=None):
@@ -72,8 +72,6 @@ class TwitterBot(object):
         self.access_token_secret = None
         self.cache_file = 'cache.dat'
         self._cache = self._load_cache()
-        # TEMPORARY, can remove next version
-        self._convert_dates()
         self.log.debug('cache: %s', self._cache)
 
     def _load_cache(self):
@@ -104,20 +102,6 @@ class TwitterBot(object):
         with open(self.cache_file, 'wb') as fh:
             pickle.dump(self._cache, fh, -1)
         return True
-
-    def _convert_dates(self):
-        # TEMPORARY: convert time strings to datetime objects
-        # Before v0.5.0 the date was a string in iso8601 format which
-        # complicates things when cleaning up the cache. This converts those
-        # dates back to datetime objects.
-        self.log.debug('enter _convert_dates()')
-        date_format = '%Y-%m-%dT%H:%M:%S.%f'
-        for url, cache_date in self._cache.iteritems():
-            if isinstance(cache_date, basestring):
-                self.log.debug('Convert %s:%s', url, cache_date)
-                cache_date_dt = datetime.strptime(cache_date, date_format)
-                self._cache[url] = cache_date_dt
-        self._save_cache()
 
     def post_update(self, status):
         """Posts update to twitter.
