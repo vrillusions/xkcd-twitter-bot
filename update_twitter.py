@@ -18,7 +18,7 @@ import logging
 import logging.config
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from ConfigParser import SafeConfigParser
 from optparse import OptionParser
 try:
@@ -72,6 +72,8 @@ class TwitterBot(object):
         self.access_token_secret = None
         self.cache_file = 'cache.dat'
         self._cache = self._load_cache()
+        # TEMPORARY, can remove next version
+        self._convert_dates()
         self.log.debug('cache: %s', self._cache)
 
     def _load_cache(self):
@@ -102,6 +104,20 @@ class TwitterBot(object):
         with open(self.cache_file, 'wb') as fh:
             pickle.dump(self._cache, fh, -1)
         return True
+
+    def _convert_dates(self):
+        # TEMPORARY: convert time strings to datetime objects
+        # Before v0.5.0 the date was a string in iso8601 format which
+        # complicates things when cleaning up the cache. This converts those
+        # dates back to datetime objects.
+        self.log.debug('enter _convert_dates()')
+        date_format = '%Y-%m-%dT%H:%M:%S.%f'
+        for url, cache_date in self._cache.iteritems():
+            if isinstance(cache_date, basestring):
+                self.log.debug('Convert %s:%s', url, cache_date)
+                cache_date_dt = datetime.strptime(cache_date, date_format)
+                self._cache[url] = cache_date_dt
+        self._save_cache()
 
     def post_update(self, status):
         """Posts update to twitter.
@@ -140,21 +156,29 @@ class TwitterBot(object):
                 post = ' '.join((entry['title'], entry['link'], suffix))
                 self.log.info('new post: %s', post)
                 self.post_update(post)
-                self._cache[entry['id']] = datetime.utcnow().isoformat()
-                # Save cache after each successful post (may be a little
-                # excessive)
-                self._save_cache()
             else:
                 self.log.info('%s exists in cache, skipping', entry['id'])
+            # Always want to update the date in case an entry is stickied to the
+            # top of the list
+            self._cache[entry['id']] = datetime.utcnow()
+            # Save cache after each successful post (may be a little excessive)
+            self._save_cache()
 
-    def cleanup_cache(self, days=90):
+    def cleanup_cache(self, days=60):
         """Removes old entries from cache.
 
-        :param int days: Remove items that are older than this many days
+        :param int days: Remove items last seen this many days ago
 
         """
-        self.log.debug('enter cleanup_cache(%s)', entries)
-        self.log.warning('cleanup_cache() not implemented yet')
+        self.log.debug('enter cleanup_cache(%s)', days)
+        prune_date = datetime.utcnow() - timedelta(days=days)
+        # Can't delete items from cache as we iterate through it, so need copy.
+        cache_copy = self._cache.copy()
+        for url, cache_date in cache_copy.iteritems():
+            if cache_date < prune_date:
+                self.log.info('removing %s (last seen: %s)', url, cache_date)
+                del self._cache[url]
+        self._save_cache()
 
 
 def main(argv=None):
