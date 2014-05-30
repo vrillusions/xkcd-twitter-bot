@@ -15,6 +15,7 @@ Environment Variables
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 import logging
+import logging.config
 import os
 import sys
 from datetime import datetime
@@ -64,14 +65,14 @@ class TwitterBot(object):
         :param string consumer_secret: The application api secret
 
         """
-        self.log = logging.getLogger('main.TwitterBot')
+        self.log = logging.getLogger('TwitterBot')
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.access_token = None
         self.access_token_secret = None
         self.cache_file = 'cache.dat'
         self._cache = self._load_cache()
-        self.log.debug('cache: {}'.format(self._cache))
+        self.log.debug('cache: %s',self._cache)
 
     def _load_cache(self):
         """Loads cache file.
@@ -110,14 +111,14 @@ class TwitterBot(object):
 
         """
         self.log.debug('enter post_update()')
-        self.log.debug('status: {}'.format(status))
+        self.log.debug('status: %s', status)
         auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret)
         auth.set_access_token(self.access_token, self.access_token_secret)
         api = tweepy.API(auth)
         try:
             api.update_status(status)
         except tweepy.error.TweepError as exc:
-            self.log.critical('Error occurred while updating status: {}'.format(exc))
+            self.log.critical('could not update status: %s', exc, exc_info=True)
             sys.exit(1)
         else:
             return True
@@ -130,22 +131,30 @@ class TwitterBot(object):
 
         """
         self.log.debug('enter process_feed()')
-        self.log.debug('url: {}'.format(url))
-        self.log.debug('suffix: {}'.format(suffix))
+        self.log.debug('url: %s', url)
+        self.log.debug('suffix: %s', suffix)
         feed = feedparser.parse(url)
         for entry in feed.entries:
             if entry['id'] not in self._cache:
-                self.log.debug('{} not cached, posting'.format(entry['id']))
+                self.log.debug('%s not cached, posting', entry['id'])
                 post = ' '.join((entry['title'], entry['link'], suffix))
-                self.log.info('new post: {}'.format(post))
+                self.log.info('new post: %s', post)
                 self.post_update(post)
                 self._cache[entry['id']] = datetime.utcnow().isoformat()
                 # Save cache after each successful post (may be a little
                 # excessive)
                 self._save_cache()
             else:
-                self.log.debug('{} exists in cache, skipping'
-                        .format(entry['id']))
+                self.log.info('%s exists in cache, skipping', entry['id'])
+
+    def cleanup_cache(self, days=90):
+        """Removes old entries from cache.
+
+        :param int days: Remove items that are older than this many days
+
+        """
+        self.log.debug('enter cleanup_cache(%s)', entries)
+        self.log.warning('cleanup_cache() not implemented yet')
 
 
 def main(argv=None):
@@ -159,14 +168,12 @@ def main(argv=None):
     :rtype: int
 
     """
-    loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
-    logformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    logging.basicConfig(level=loglevel, format=logformat)
-    log = logging.getLogger('main')
+    log = logging.getLogger()
     if argv is None:
         argv = sys.argv
     options = _parse_opts(argv)[0]
     if options.verbose:
+        # BUG: setlevel doesn't work now I'm using fileconfig
         log.setLevel(logging.DEBUG)
     config = SafeConfigParser()
     if not config.read(options.config):
@@ -181,7 +188,10 @@ def main(argv=None):
     twitterbot.access_token_secret = access_token_secret
     twitterbot.process_feed('http://xkcd.com/rss.xml', '#xkcd')
     twitterbot.process_feed('http://what-if.xkcd.com/feed.atom', '#xkcd #whatif')
+    twitterbot.cleanup_cache()
+    log.info('finished')
 
 
 if __name__ == "__main__":
+    logging.config.fileConfig('logging.ini')
     sys.exit(main())
