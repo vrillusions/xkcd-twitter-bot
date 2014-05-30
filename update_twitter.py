@@ -16,7 +16,6 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 import logging
 import logging.config
-import os
 import sys
 from datetime import datetime, timedelta
 from ConfigParser import SafeConfigParser
@@ -45,10 +44,12 @@ def _parse_opts(argv=None):
     """
     parser = OptionParser(version='%prog {}'.format(__version__))
     parser.set_defaults(verbose=False)
-    parser.add_option('-c', '--config', dest='config', metavar='FILE',
-            help='use config FILE (default: %default)', default='config.ini')
-    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
-            help='be more verbose (default is no)')
+    parser.add_option(
+        '-c', '--config', dest='config', metavar='FILE',
+        help='use config FILE (default: %default)', default='config.ini')
+    parser.add_option(
+        '-v', '--verbose', dest='verbose', action='store_true',
+        help='be more verbose (default is no)')
     (options, args) = parser.parse_args(argv)
     return options, args
 

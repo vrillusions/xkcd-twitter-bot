@@ -9,19 +9,15 @@ Utility to help with getting the access token for a user
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 import sys
-import os
 from ConfigParser import SafeConfigParser
 import logging
 
 import tweepy
 
 
-logging.basicConfig(level=logging.DEBUG)
-
-
 def main():
     """The main function."""
-    log = logging.getLogger('main')
+    #log = logging.getLogger('main')
     config = SafeConfigParser()
     if not config.read('config.ini'):
         print('Could not read config file')
@@ -51,4 +47,5 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     sys.exit(main())
