@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# vim:ts=4:sw=4:ft=python:fileencoding=utf-8
+# -*- coding: utf-8 -*-
 """Get user oauth credentials.
 
 Utility to help with getting the access token for a user

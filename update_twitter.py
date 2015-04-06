@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# vim: set fileencoding=utf-8 :
+# -*- coding: utf-8 -*-
 """Update twitter from an rss feed.
 
 Parse an rss feed for new entries and post them to twitter.
