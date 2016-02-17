@@ -1,4 +1,4 @@
-# XKCD Twitter Bot [![Project Status](http://stillmaintained.com/vrillusions/xkcd-twitter-bot.png)](http://stillmaintained.com/vrillusions/xkcd-twitter-bot) [![Build Status](https://travis-ci.org/vrillusions/xkcd-twitter-bot.svg?branch=master)](https://travis-ci.org/vrillusions/xkcd-twitter-bot)
+# XKCD Twitter Bot [![Build Status](https://travis-ci.org/vrillusions/xkcd-twitter-bot.svg?branch=master)](https://travis-ci.org/vrillusions/xkcd-twitter-bot)
 
 This is the code that reads the rss feed from xkcd and posts to [@xkcd_bot](http://twitter.com/xkcd_bot).
 
