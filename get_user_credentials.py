@@ -9,10 +9,11 @@ Utility to help with getting the access token for a user
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 import sys
-from ConfigParser import SafeConfigParser
 import logging
 
 import tweepy
+from six.moves.configparser import SafeConfigParser
+from six.moves import input
 
 
 def main():
@@ -24,7 +25,7 @@ def main():
         return 1
     consumer_key = config.get('twitter', 'consumer_key')
     consumer_secret = config.get('twitter', 'consumer_secret')
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret, secure=True)
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     try:
         redirect_url = auth.get_authorization_url()
     except tweepy.TweepError as exc:
@@ -34,7 +35,7 @@ def main():
     print('Please go to the following url to authorize this app:')
     print("  {}\n".format(redirect_url))
     print('Enter the verifier code you see after authorizing app')
-    verifier = raw_input('Verifier: ')
+    verifier = input('Verifier: ')
     try:
         auth.get_access_token(verifier)
     except tweepy.TweepError:
@@ -47,5 +48,5 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     sys.exit(main())

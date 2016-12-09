@@ -18,15 +18,13 @@ import logging
 import logging.config
 import sys
 from datetime import datetime, timedelta
-from ConfigParser import SafeConfigParser
 from optparse import OptionParser
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+from six.moves.configparser import SafeConfigParser
+from six.moves import cPickle as pickle
 
 import feedparser
 import tweepy
+import six
 
 
 __version__ = '0.6.0-dev'
@@ -101,7 +99,7 @@ class TwitterBot(object):
         """
         self.log.debug('enter _save_cache()')
         with open(self.cache_file, 'wb') as fh:
-            pickle.dump(self._cache, fh, -1)
+            pickle.dump(self._cache, fh, protocol=2)
         return True
 
     def post_update(self, status):
@@ -159,7 +157,7 @@ class TwitterBot(object):
         prune_date = datetime.utcnow() - timedelta(days=days)
         # Can't delete items from cache as we iterate through it, so need copy.
         cache_copy = self._cache.copy()
-        for url, cache_date in cache_copy.iteritems():
+        for url, cache_date in six.iteritems(cache_copy):
             if cache_date < prune_date:
                 self.log.info('removing %s (last seen: %s)', url, cache_date)
                 del self._cache[url]
