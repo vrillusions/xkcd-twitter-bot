@@ -99,7 +99,7 @@ class TwitterBot(object):
         """
         self.log.debug('enter _save_cache()')
         with open(self.cache_file, 'wb') as fh:
-            pickle.dump(self._cache, fh, protocol=2)
+            pickle.dump(self._cache, fh, protocol=-1)
         return True
 
     def post_update(self, status):
