@@ -2,3 +2,4 @@
 config.ini
 cache*.dat
 *.log*
+/.python-version
