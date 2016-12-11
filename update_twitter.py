@@ -118,12 +118,8 @@ class TwitterBot(object):
         try:
             api.update_status(status)
         except tweepy.error.TweepError as exc:
-            if exc.api_code == 187:
-                # If it's just a duplicate status throw warning but continue
-                self.log.warn('could not update status: Status is a duplicate')
-            else:
-                self.log.critical('could not update status: %s', exc, exc_info=True)
-                sys.exit(1)
+            self.log.critical('could not update status: %s', exc, exc_info=True)
+            sys.exit(1)
         else:
             return True
 

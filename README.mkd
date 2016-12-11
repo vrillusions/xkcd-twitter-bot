@@ -15,3 +15,6 @@ I made this when I noticed [@xkcdbot](http://twitter.com/xkcdbot) hasn't updated
 - put those values in `config.ini`
 - run `update_twitter.py -v` and it may actually work
 
+## Rebuilding cache
+
+For the upgrade from python2 to python3 the cache file will likely complain it's corrupt.  While deleting the cache file and running update should cause twitter to complain about duplicate updates apparently it doesn't always.  Best bet is to just have it post to a throwaway twitter account then change it back once the cache is updated.
