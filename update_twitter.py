@@ -53,8 +53,9 @@ def _parse_opts(argv=None):
 
 
 class TwitterBot(object):
+    """Class to handle posting to twitter"""
     def __init__(self, consumer_key, consumer_secret):
-        """Class to handle posting to twitter.
+        """Set initial options.
 
         Intentionally the access_token and access_token_secret are not set at
         initialization. This way it's possible to post different feeds to
@@ -117,8 +118,12 @@ class TwitterBot(object):
         try:
             api.update_status(status)
         except tweepy.error.TweepError as exc:
-            self.log.critical('could not update status: %s', exc, exc_info=True)
-            sys.exit(1)
+            if exc.api_code == 187:
+                # If it's just a duplicate status throw warning but continue
+                self.log.warn('could not update status: Status is a duplicate')
+            else:
+                self.log.critical('could not update status: %s', exc, exc_info=True)
+                sys.exit(1)
         else:
             return True
 

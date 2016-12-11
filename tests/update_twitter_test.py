@@ -10,4 +10,5 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def initial_test():
+    """Just an initial test."""
     pass
