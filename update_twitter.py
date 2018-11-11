@@ -194,8 +194,8 @@ def main(argv=None):
     twitterbot = TwitterBot(consumer_key, consumer_secret)
     twitterbot.access_token = access_token
     twitterbot.access_token_secret = access_token_secret
-    twitterbot.process_feed('http://xkcd.com/rss.xml', '#xkcd')
-    twitterbot.process_feed('http://what-if.xkcd.com/feed.atom', '#xkcd #whatif')
+    twitterbot.process_feed('https://xkcd.com/rss.xml', '#xkcd')
+    twitterbot.process_feed('https://what-if.xkcd.com/feed.atom', '#xkcd #whatif')
     twitterbot.cleanup_cache()
     log.info('finished')
 
