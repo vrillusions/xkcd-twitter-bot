@@ -1,4 +1,8 @@
-# XKCD Twitter Bot [![Build Status](https://travis-ci.org/vrillusions/xkcd-twitter-bot.svg?branch=master)](https://travis-ci.org/vrillusions/xkcd-twitter-bot) [![Code Issues](https://www.quantifiedcode.com/api/v1/project/ef725c763c0e4c7b8303e5a622a98676/badge.svg)](https://www.quantifiedcode.com/app/project/ef725c763c0e4c7b8303e5a622a98676)
+# XKCD Twitter Bot
+
+April 14, 2023: This project is no longer maintained and `@xkcd_bot` will no longer be updated.  As of now an alternative on twitter is [@xkcd_rss](https://twitter.com/xkcd_rss).  On Mastodon a good option is [@xkcdbot@botsin.space](https://botsin.space/@xkcdbot).
+
+---
 
 This is the code that reads the rss feed from xkcd and posts to [@xkcd_bot](http://twitter.com/xkcd_bot).
 
